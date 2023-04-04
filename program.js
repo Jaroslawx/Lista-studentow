@@ -17,21 +17,11 @@ class Student {
 
 }
 
-const students = [
-    new Student("Adam", "Kowalski", 123456, 75),
-    new Student("Anna", "Nowak", 234567, 82),
-    new Student("Piotr", "Wisniewski", 345678, 90),
-    new Student("Maria", "Szymanska", 456789, 60),
-];
-
-// for (let i = 0; i < students.length; i++) {
-//     console.log(students[i].getData());
-//}
-
-class listaStudentow {
+class ListaStudentow {
 
     constructor(students) {
         this.students = students;
+        this.nextIndexNumber = students.length + 1; // następny numer indeksu
     }
   
     getStudentByIndex(index) {
@@ -41,4 +31,22 @@ class listaStudentow {
     getStudentByLastName(lastName) {
         return this.students.filter(student => student.lastName.toLowerCase().startsWith(lastName.toLowerCase()));
     }
+
+    addStudent(firstName, lastName, pointsEarned) {
+        const student = new Student(firstName, lastName, this.nextIndexNumber, pointsEarned);
+        this.students.push(student);
+        this.nextIndexNumber++; // zwiększenie wartości dla następnego numeru indeksu
+        return student;
+    }
+}
+
+const lista = new ListaStudentow([
+    new Student("Adam", "Kowalski", 1, 75),
+    new Student("Anna", "Nowak", 2, 82),
+    new Student("Piotr", "Wisniewski", 3, 90),]);
+  
+lista.addStudent("Maria", "Szymanska", 60);
+
+for (let i = 0; i < lista.students.length; i++) {
+    console.log(lista.students[i].getData());
 }
