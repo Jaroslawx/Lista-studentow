@@ -8,32 +8,22 @@ class Student {
         this.grade = null;
     }
 
+    //oferuje metodę zwracającą sformatowany string ze swoimi danymi
     getData() {
         return `Student: ${this.firstName} ${this.lastName}, Index: ${this.indexNumber}, Points: ${this.pointsEarned}`;
     }
 
+    //pozwala na zmianę liczby punktów
     setPoints(points) {
         this.pointsEarned = points;
     }
-
 }
 
-//lista studentów - zawiera kolekcję obiektów typu Student
-class ListaStudentow {
+class StudentList {
 
     constructor(students) {
         this.students = students;
         this.nextIndexNumber = students.length + 1; // następny numer indeksu
-    }
-  
-    //pozwala na pobranie jednego studenta po numerze indeksu (zwraca obiekt)
-    getStudentByIndex(index) {
-        return this.students.find(student => student.indexNumber === index);
-    }
-
-    //wyszukuje po nazwisku, zwraca listę studentów których nazwisko zaczyna się od wskazanego ciągu znaków (rozmiar nie ma znaczenia)
-    getStudentByLastName(lastName) {
-        return this.students.filter(student => student.lastName.toLowerCase().startsWith(lastName.toLowerCase()));
     }
 
     //pozwala na dodanie studenta (generując unikalny numer indeksu)
@@ -63,7 +53,8 @@ class ListaStudentow {
         const averagePoints = totalPoints / this.students.length;
         return averagePoints;
     }
-
+    
+    //pozwala na hurtowe wystawienie ocen dla wszystkich studentów na podstawie wskazanego maksimum punktów do zdobycia (50% maksimum to dst, 60% to dst+, 70% db, 80% db+, 90% bdb)
     gradeAllStudents(maxPoints) {
         const scoreThresholds = [0.5, 0.6, 0.7, 0.8, 0.9];
         const gradeThresholds = ["DST", "DST+", "DB", "DB+", "BDB"];
@@ -82,6 +73,7 @@ class ListaStudentow {
         });  
     }
 
+    //oblicza statystykę ocen (ile osób zdobyło dany stopień)
     calculateGradeStats() {
         const gradeStats = {
             "NDST": 0, // not graded yet
@@ -105,6 +97,16 @@ class ListaStudentow {
             studentList += formattedStudent;
         });
         return studentList;
+    }
+
+    //pozwala na pobranie jednego studenta po numerze indeksu (zwraca obiekt)
+    getStudentByIndex(index) {
+        return this.students.find(student => student.indexNumber === index);
+    }
+    
+    //wyszukuje po nazwisku, zwraca listę studentów których nazwisko zaczyna się od wskazanego ciągu znaków (rozmiar nie ma znaczenia)
+    getStudentByLastName(lastName) {
+        return this.students.filter(student => student.lastName.toLowerCase().startsWith(lastName.toLowerCase()));
     }
 
     //zwraca sformatowaną listę studentów o liczbie punktów równej bądź większej niż wskazana wartość (jako jeden string)
@@ -164,20 +166,46 @@ class ListaStudentow {
 class Program {
     static main() {
         // Testowanie
-        const lista = new ListaStudentow([
+        const lista = new StudentList([
             new Student("Adam", "Kowalski", 1, 75),
             new Student("Anna", "Nowak", 2, 82),
-            new Student("Piotr", "Wisniewski", 3, 90),
+            new Student("Piotr", "Wisniewski", 3, 85),
+            new Student("Krystian", "Polak", 4, 30),
         ]);
-        
-        lista.addStudent("Maria", "Szymanska", 60);
-        lista.removeStudentByIndex(2);
 
         for (let i = 0; i < lista.students.length; i++) {
             console.log(lista.students[i].getData());
         }
 
+        lista.students.forEach(student => {
+            if (student.indexNumber === 3) {
+                student.setPoints(100);
+            }
+        });
+
+        //console.log(lista.getStudentByIndex(1));
+        //console.log(lista.getStudentByLastName("Nowak"));
+
         console.log(lista.getStudentList());
+
+        lista.addStudent("Maria", "Szymanska", 60);
+        lista.removeStudentByIndex(1);
+
+        console.log(`Średnia punktów dla wszystkich studentów: ${lista.getAveragePoints()}`);
+
+        console.log(lista.formatStudentsListByPoints(80));
+
+        lista.gradeAllStudents(100);
+
+        const gradeStats = lista.calculateGradeStats();
+
+        console.log("Liczba studentów z daną oceną:");
+        for (const grade in gradeStats) {
+            console.log(`${grade}: ${gradeStats[grade]}`);
+        }
+
+        console.log(lista.getStudentList());
+        console.log(lista.getSortedLastNames());
 
     }
 }
